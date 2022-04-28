@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+    The Bullet Script is used by the Bullet prefab to store it's variables and
+    to determine if the bullet has hit something or if it should destroy itself.
+ */
 public class Bullet : MonoBehaviour
 {
     public float bulletSpeed = 7f;
@@ -12,6 +16,7 @@ public class Bullet : MonoBehaviour
 
     private void Update()
     {
+        //The bullets movement
         transform.Translate(Vector3.forward * Time.deltaTime * bulletSpeed);
         maxDistance += 1 * Time.deltaTime;
 
@@ -21,10 +26,10 @@ public class Bullet : MonoBehaviour
         }
     }
 
-
+    //The OnTrigger for the bullet to see if it collides with something.
     public void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Got Triggered " + other.gameObject.tag);
+        //Debug.Log("Got Triggered " + other.gameObject.tag);
 
         if (other.tag == "Zombie")
         {
@@ -34,14 +39,4 @@ public class Bullet : MonoBehaviour
         }
     }
 
-    /*private void OnCollisionEnter(Collision collision)
-    {
-        Debug.Log("Got Triggered " + collision.gameObject.tag);
-
-        if (collision.gameObject.tag == "Zombie")
-        {
-            triggeringEnemy = collision.gameObject;
-            triggeringEnemy.GetComponent<Zombie>().health -= damage;
-        }
-    }*/
 }

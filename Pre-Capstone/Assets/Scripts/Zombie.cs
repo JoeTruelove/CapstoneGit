@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+//This is the Heart script for the Zombie AI and controls everything for the AI to think.
 public class Zombie : MonoBehaviour
 {
     private NavMeshAgent agent;
@@ -10,18 +11,20 @@ public class Zombie : MonoBehaviour
     public Transform target;
     public GameController gc;
 
+    public enum AIState { idle, chasingPlayer, chasingCar, chasingPipe, patrolling, attacking, dead };
+
     public float distanceThreshold = 10f;
     public float viewDistance = 10f;
     public float fov = 120f;
     public float wanderRadius = 7f;
     public int health = 10;
-    public enum AIState { idle, chasingPlayer, chasingCar, patrolling, attacking, dead};
+    public int damage = 1;
 
     public AIState aiState = AIState.idle;
     static private List<GameObject> patrolPoints = null;
     
     private bool isAware;
-    private GameObject currentTarget;
+    private Transform currentTarget;
     private bool chasingCar;
     private bool chasingPlayer;
     private Vector3 wanderPoint;
@@ -51,18 +54,21 @@ public class Zombie : MonoBehaviour
     {
         SearchForPlayer();
 
-        if (health <= 0)
+        if (health <= 0 && !isDead)
         {
-            gc.ZombieDied(this.gameObject);
-            //Destroy(this.gameObject);
             aiState = AIState.dead;
+            gc.ZombieDied(this.gameObject);
+            agent.isStopped = true;
+            //Destroy(this.gameObject);
+            
             isDead = true;
         }
     }
 
+    //Used by the Car script to change Zombie to chase the Car
     public void CarAlarm(GameObject go)
     {
-        currentTarget = go;
+        currentTarget = go.transform;
         
         if(!chasingPlayer)
         {
@@ -71,6 +77,17 @@ public class Zombie : MonoBehaviour
         }
 
     }
+
+    //Used by PipeBomb Script to change Zombie to chase the Pipebomb
+    public void PipeBomb(Transform go)
+    {
+        currentTarget = go.transform;
+
+        ChangeToPipeBomb();
+
+    }
+
+    //This method is what controls what the Zombie is currently doing when they are in a certain "state"
     IEnumerator Think()
     {
         while(true)
@@ -79,15 +96,12 @@ public class Zombie : MonoBehaviour
             {
                 case AIState.idle:
 
-                    
-
-                    if(isAware)
+                    if (isAware)
                     {
                         ChangeToChase();
                         chasingPlayer = true;
                     }
                     agent.SetDestination(transform.position);
-
                     break;
                 case AIState.chasingPlayer:
                     animator.SetBool("IsRunning", true);
@@ -98,23 +112,38 @@ public class Zombie : MonoBehaviour
                     agent.SetDestination(target.position);
                     break;
                 case AIState.chasingCar:
-                    
+
                     if (chasingPlayer)
                     {
-                        Debug.Log("Undid Car Chase Successfully");
+                        //Debug.Log("Undid Car Chase Successfully");
                         ChangeToChase();
                     }
                     else
                     {
-
-                        Debug.Log("Inside Car Chase");
-                        agent.SetDestination(currentTarget.transform.localPosition);
+                        //Debug.Log("Inside Car Chase");
+                        agent.SetDestination(currentTarget.localPosition);
                         chasingCar = true;
 
                         if (isAware)
                         {
                             ChangeToChase();
                             chasingPlayer = true;
+                        }
+                    }
+                    break;
+                case AIState.chasingPipe:
+                    {
+                        if (currentTarget != null)
+                        {
+                            agent.SetDestination(currentTarget.localPosition);
+                        }
+                        else if (isAware)
+                        {
+                            ChangeToChase();
+                        }
+                        else
+                        {
+                            ChangeToPatrolling();
                         }
                     }
                     break;
@@ -134,23 +163,24 @@ public class Zombie : MonoBehaviour
                     ChangeToChase();
                     break;
                 case AIState.dead:
+                    //Destroy(this.gameObject);
                     animator.SetBool("Dead", true);
                     break;
                 default:
                     break;
             }
-            
-            
             yield return new WaitForSeconds(0.2f);
         }
     }
 
+    //A check to see if the Zombie is aware of the Player's presence
     public void IsAware()
     {
         isAware = true;
-        Debug.Log("is aware");
+        //Debug.Log("is aware");
     }
     
+    //Method to change the Zombie's current destination to a random wander point
     public void Wander()
     {
         if(Vector3.Distance(transform.position, wanderPoint) < 2f)
@@ -162,6 +192,7 @@ public class Zombie : MonoBehaviour
         }
     }
 
+    //A continuous check to see if the Player is within the Zombie's sight
     public void SearchForPlayer()
     {
         float dist = Vector3.Distance(target.position, transform.position);
@@ -178,7 +209,7 @@ public class Zombie : MonoBehaviour
                     if (hit.transform.CompareTag("Player"))
                     {
                         IsAware();
-                        Debug.Log("Player Found");
+                        //Debug.Log("Player Found");
                     }
                 }
             }
@@ -189,6 +220,7 @@ public class Zombie : MonoBehaviour
         }
     }
 
+    //Method to create a random point within a distance for the Zombie to "wander" to
     public Vector3 RandomWanderPoint()
     {
         Vector3 randomPoint = (Random.insideUnitSphere * wanderRadius) + transform.position;
@@ -197,8 +229,9 @@ public class Zombie : MonoBehaviour
         return new Vector3(navHit.position.x, transform.position.y, navHit.position.z);
     }
 
-    
-
+    /*
+        These multiple "ChangeTo..." methods are used by other methods to change the Zombie's current thinking state.
+     */
     void ChangeToPatrolling()
     {
         aiState = AIState.patrolling;
@@ -224,33 +257,29 @@ public class Zombie : MonoBehaviour
         animator.SetBool("IsWalking", true);
     }
 
+    void ChangeToPipeBomb()
+    {
+        aiState = AIState.chasingPipe;
+        animator.SetBool("IsWalking", true);
+    }
+
     void ChangeToAttack()
     {
         aiState = AIState.attacking;
     }
 
-    IEnumerator Wait(float duration, string ai)
-    {
-        float time = 0;
-        //Debug.Log("we are waiting");
-        while (time < duration)
-        {
-            time += Time.deltaTime;
-            yield return null;
-
-        }
-        //Debug.Log("we are done waiting");
-    }
-
+    //This method is used by the Zombie's attack animation to determine if the Player is currently in front of the Zombie
+    //while it is attacking.
     public void Attack()
     {
         RaycastHit objectHit;
         Vector3 fwd = this.transform.TransformDirection(Vector3.forward);
         Debug.DrawRay(this.transform.position, fwd * 50, Color.green);
         if (Physics.Raycast(this.transform.position, fwd, out objectHit, 50))
-            target.GetComponent<PlayerController>().health--;
+            target.GetComponent<PlayerController>().health = target.GetComponent<PlayerController>().health - damage;
     }
 
+    //The Zombie's OnTrigger to attack the Player.
     private void OnTriggerEnter(Collider other)
     {
         if(other.gameObject.tag == "Player")

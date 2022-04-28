@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+    The Car script is used by the Car prefab in order to give the car a
+    sphere collider to cause all Zombies within the radius to chase it.
+ */
 public class Car : MonoBehaviour
 {
     public bool alarmOn = false;
@@ -14,6 +18,7 @@ public class Car : MonoBehaviour
     {
         sphereCollider = GetComponent<SphereCollider>();
     }
+
     void Update()
     {
         if(alarmOn || Input.GetKeyDown(KeyCode.J))
@@ -27,12 +32,14 @@ public class Car : MonoBehaviour
         }
     }
 
+    //A set method to set the car alarm to true
     public void AlarmTriggered()
     {
         //Debug.Log("Alarm is On");
         alarmOn = true;
     }
     
+    //The OnTriggerStay to check if any objects where already within the collider.
     private void OnTriggerStay(Collider other)
     {
         if (alarmOn)
@@ -45,6 +52,8 @@ public class Car : MonoBehaviour
             }
         }
     }
+
+    //The OnTriggerEnter to check if any objects have entered the collider.
     private void OnTriggerEnter(Collider other)
     {
         if (alarmOn)

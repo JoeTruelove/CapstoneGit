@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+    The PlayerController takes care of most of the Player's mechanics.
+    Takes care of movement and the Player's Variables
+ */
 public class PlayerController : MonoBehaviour
 {
     private InputHandler _input;
@@ -22,7 +26,6 @@ public class PlayerController : MonoBehaviour
     public float waitTime;
     public int health = 20;
     private bool dead = false;
-    private bool inventoryOpen = false;
 
     private void Awake()
     {
@@ -44,32 +47,22 @@ public class PlayerController : MonoBehaviour
             targetRotation.z = 0;
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7f * Time.deltaTime);
         }
+
+        //Keeps track if the Player Dies
         if(health <= 0)
         {
             dead = true;
         }
+
         //Shooting
-        if(Input.GetMouseButtonDown(0) && inventoryOpen == false)
+        if(Input.GetMouseButtonDown(0))
         {
-            Debug.Log(inventoryOpen);
+            //Debug.Log(inventoryOpen);
             Shoot();
             pg.Fire();
         }
 
-        /*if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            if(inventory.activeSelf.Equals(false))
-            {
-                inventory.SetActive(true);
-                inventoryOpen = true;
-            }
-            else
-            {
-                inventory.SetActive(false);
-                inventoryOpen = false;
-            }
-        }*/
-
+        //Player Run
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
             moveSpeed = 7;
@@ -97,6 +90,7 @@ public class PlayerController : MonoBehaviour
         transform.rotation = Quaternion.RotateTowards(transform.rotation, rotation, rotateSpeed);
     }*/
 
+    //Calculates the movement for the Player
     private Vector3 MoveTowardTarget(Vector3 targetVector)
     {
         var speed = moveSpeed * Time.deltaTime;
@@ -110,6 +104,7 @@ public class PlayerController : MonoBehaviour
         return targetVector;
     }
 
+    //Instantiates a bullet with bullet script
     private void Shoot()
     {
         Instantiate(bullet.transform, bulletSpawnPoint.transform.position, bulletSpawnPoint.transform.rotation);

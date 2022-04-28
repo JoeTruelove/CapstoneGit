@@ -1,7 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/*
+    The PlayerGun script is used to give the Player's gun sound and mimmic a 
+    sound sphere around the Player for the Zombie's to "hear" the gunshots.
+ */
 public class PlayerGun : MonoBehaviour
 {
     public AudioClip shootSound;
@@ -15,14 +18,8 @@ public class PlayerGun : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
     }
-    public void Update()
-    {
-        /*if(Input.GetMouseButtonDown(0))
-        {
-            Fire();
-        }*/
-    }
 
+    //Creates a sphere collider to mimmic a sound field for the Player's gun
     public void Fire()
     {
         audioSource.PlayOneShot(shootSound);
