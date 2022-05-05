@@ -57,10 +57,10 @@ public class Zombie : MonoBehaviour
         if (health <= 0 && !isDead)
         {
             aiState = AIState.dead;
-            gc.ZombieDied(this.gameObject);
+            
             agent.isStopped = true;
             //Destroy(this.gameObject);
-            
+            gc.ZombieDied(this.gameObject);
             isDead = true;
         }
     }

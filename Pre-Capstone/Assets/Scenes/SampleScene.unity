@@ -2906,6 +2906,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1157957440}
     m_Modifications:
+    - target: {fileID: 200961054656235172, guid: 73e3882d4dbcfdc43b46b50497c64630,
+        type: 3}
+      propertyPath: gc
+      value: 
+      objectReference: {fileID: 660841365}
     - target: {fileID: 4750747856620873695, guid: 73e3882d4dbcfdc43b46b50497c64630,
         type: 3}
       propertyPath: m_RootOrder
@@ -2975,6 +2980,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1157957440}
     m_Modifications:
+    - target: {fileID: 200961054656235172, guid: 73e3882d4dbcfdc43b46b50497c64630,
+        type: 3}
+      propertyPath: gc
+      value: 
+      objectReference: {fileID: 660841365}
     - target: {fileID: 4750747856620873695, guid: 73e3882d4dbcfdc43b46b50497c64630,
         type: 3}
       propertyPath: m_RootOrder
@@ -7215,6 +7225,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6382109558488338787, guid: 8b2c877477f92fd49a688a26124144b4,
+        type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
     - target: {fileID: 7258234987260673883, guid: 8b2c877477f92fd49a688a26124144b4,
         type: 3}
       propertyPath: m_Speed
@@ -9525,6 +9540,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1157957440}
     m_Modifications:
+    - target: {fileID: 200961054656235172, guid: 73e3882d4dbcfdc43b46b50497c64630,
+        type: 3}
+      propertyPath: gc
+      value: 
+      objectReference: {fileID: 660841365}
     - target: {fileID: 4750747856620873695, guid: 73e3882d4dbcfdc43b46b50497c64630,
         type: 3}
       propertyPath: m_RootOrder
@@ -15467,6 +15487,11 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 978994276}
+    - target: {fileID: 3403679050375769749, guid: 73e3882d4dbcfdc43b46b50497c64630,
+        type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
     - target: {fileID: 4750747856620873695, guid: 73e3882d4dbcfdc43b46b50497c64630,
         type: 3}
       propertyPath: m_RootOrder
